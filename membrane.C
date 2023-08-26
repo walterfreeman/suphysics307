@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <omp.h>
 int nr,nth;
-int N=120;
+int N=81;
 float get_bessel_zero(int m, int n)
 { 
   float zeroes[30]={2.4048,3.8317,5.1356,6.3802,7.5883,8.7715,5.5201,7.0156,8.4172,9.7610,11.0647,12.3386,8.6537,10.1735,11.6198,13.0152,14.3725,15.7002,11.7915,13.3237,14.7960,16.2235,17.6160,18.9801,14.9309,16.4706,17.9598,19.4094,20.8269,22.2178};
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     mode = 'd';
   }
     else mode=argv[1][0];
-  int m,n,frameskip=3;
+  int m,n,frameskip=4;
   double center,rad,str,dt=4e-3,damping=0;
   if (mode == 'b')
   {
@@ -104,16 +104,29 @@ int main(int argc, char **argv)
     frame++;
     if (frame%frameskip==0)
     {   
+      float lastred=1000,lastblue=1000,lastgreen=1000;
+      float eps=0.01;
       for (int i=0;i<=N;i++)
 	for (int j=0;j<=N;j++)
 	{
 	  float x=(float)((i-N/2)*2)/N;
 	  float y=(float)((j-N/2)*2)/N;
 	  if ((x*x+y*y)>1+dx*6) continue;
-	  if ((i+j)% 2) printf("C %.2e %.2e %.2e\n",0.5+z[(i)*(N+1)+j]*5,0.5-fabs(z[(i)*(N+1)+j])*2,0.5-z[(i)*(N+1)+j]*5);
+	  float red=0.5+z[(i)*(N+1)+j]*2.5;
+	  float green=0.5-fabs(z[(i)*(N+1)+j])*1;
+	  float blue=0.5-z[(i)*(N+1)+j]*2.5;
+	  
+	  if (fabs(lastred-red) + fabs(lastblue-blue) + fabs (lastgreen-green) > eps)
+	  {
+		  printf("C %.2e %.2e %.2e\n",red,green,blue);
+		  lastred=red;
+		  lastgreen=green;
+		  lastblue=blue;
+	  }
+
 	  if ((x*x+y*y)<1+dx*1.5 && (x+dx)*(x+dx)+(y*y) < 1+dx*1.5 && i<N) 
 	    if ((x*x+y*y)<1+dx*1.5 && (y+dx)*(y+dx)+(x*x) < 1+dx*1.5 && i<N) 
-	  	printf("q3 %.8e %.8e %.8e %.8e %.8e %.8e %.8e %.8e %.8e %.8e %.8e %.8e\n",x,y,      z[(i)*(N+1)+j]
+	  	printf("q3 %.4e %.4e %.4e %.4e %.4e %.4e %.4e %.4e %.4e %.4e %.4e %.4e\n",x,y,      z[(i)*(N+1)+j]
 	                                                  ,x,y+dx,   z[(i)*(N+1)+j+1]
 	                                                   ,x+dx,y+dx,z[(i+1)*(N+1)+j+1]
 	                                                   ,x+dx,y,   z[(i+1)*(N+1)+j]);

@@ -680,7 +680,8 @@ void quad(const vector v1, const vector v2, const vector v3, const vector v4, do
     nrm2=f*normalize((v4-v1)^(v4-v3));
     //    if (rotate(rotate(nrm1,invmodmat),invprojmat).z < 0) nrm1=nrm1*-1;
     //    if (rotate(rotate(nrm2,invmodmat),invprojmat).z < 0) nrm2=nrm2*-1;
-    glNormal3d(nrm1.x, nrm1.y, nrm1.z);
+    if (nrm1.z > 0) glNormal3d(nrm1.x, nrm1.y, nrm1.z);
+         else       glNormal3d(nrm2.x, nrm2.y, nrm2.z);
     myColor4f(red/2,green/2,blue/2,1);
     float shine=50.0;
     glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shine);
@@ -709,6 +710,7 @@ void quad(const vector v1, const vector v2, const vector v3, const vector v4, do
     lin3(v3, v4);
     lin3(v4, v1);
     glEnd();
+    
 
 }
 
