@@ -368,7 +368,7 @@ void myColor4f(float r, float g, float b, float a)
 void transform(double x, double y, double z, double *X, double *Y, double *Z);
 void transform(vector v1, vector v2);
 
-
+/*
 void renderBitmapStringTry(double x, double y, double z, void *font, char *string) 
 {  
   glDisable(GL_LIGHTING);
@@ -387,7 +387,7 @@ void renderBitmapStringTry(double x, double y, double z, void *font, char *strin
   glPopMatrix();
   glEnable(GL_LIGHTING);
 }
-
+*/
 
 void renderBitmapString(double x, double y, double z, void *font, char *string) 
 {  
@@ -1791,7 +1791,7 @@ void resize(int w, int h)
 void keyb(unsigned char key, int x, int y)
 {
 
-    if (key == 'Q') {save_config(); glutLeaveMainLoop();}
+    if (key == 'Q') {save_config(); exit(0);}
     if (key == 'A') {axes=1-axes; adef=0; update=1;}
     if (key == 'S') {sunlight = 1-sunlight;}
     if (key == 'F') {fpsdisplay = 1-fpsdisplay; update=1;}
@@ -1811,8 +1811,8 @@ void keyb(unsigned char key, int x, int y)
     }
     else
     {
-	if (key == '=') {vdist2 /= 1.02; update=1;}
-	if (key == '-') {vdist2 *= 1.02; update=1;}
+	if (key == '=') {vdist2 /= 1.02; scale2 /= 1.02; update=1;}
+	if (key == '-') {vdist2 *= 1.02; scale2 *= 1.02; update=1;}
 	if (key == 'a') {center2.x += 0.02*scale2;update=1;}
 	if (key == 's') {center2.y += 0.02*scale2;update=1;}
 	if (key == 'd') {center2.x -= 0.02*scale2;update=1;}
