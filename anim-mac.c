@@ -18,7 +18,6 @@ gcc anim.c -framework GLUT -framework OpenGL -framework Cocoa
 #include <stdlib.h>
 #include <math.h>
 #include "vector.h"
-#include "makepng.h"
 #include <unistd.h>
 #include <string.h>
 
@@ -78,39 +77,7 @@ double globalgamma=1;
 
 void save_config(void);
 void load_config(void);
-void screenshot(void);
 
-void screenshot(char *fn)
-{
-  if (!fopen(fn,"w")) 
-  {
-    fprintf(stderr, "Can't write to filename %s, using a default instead\n",fn);
-    screenshot();
-    return;
-  }
-  char *pixels = (char *)malloc(sizeof(GL_UNSIGNED_BYTE)*window_size_y * window_size_x);
-  glReadBuffer(GL_FRONT);
-  glReadPixels(0, 0, window_size_x, window_size_y, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-  printf("invoking makepng\n");
-  makepng(fn,window_size_x, window_size_y, pixels);
-  printf("end of screenshot\n");
-}
-
-
-void screenshot(void)
-{
-  
-  char fn[200];
-  int nameokay=0;
-  int num=0;
-  while (nameokay == 0)
-  {
-    if (num > 0) snprintf(fn, 200, "anim-%05d.png",num); else snprintf(fn, 200, "anim.png");
-    if (access( fn, F_OK ) == -1 ) nameokay = 1;
-    num++;  
-  }
-  screenshot(fn);
-}
 
 vector rotate_arb(vector v, vector a, double th)
 {
@@ -1216,30 +1183,6 @@ void idle(void)
 	glEnable(GL_LIGHTING);
 	//    renderBitmapString(x/scale,y/scale,0,GLUT_BITMAP_TIMES_ROMAN_24,line2);
     }
-    else if (!strncmp(line, "screenshot",10))
-    {
-	// decide if user has entered a filename or not
-	if (line[11] != 32 && line[11] != 13 && line[11] != 0)
-	{
-	    // there's a filename; see if it ends in .png or not 
-	    if (!strncmp(line+strlen(line)-5, ".png",4)) 
-	    {
-		line[strlen(line)-1]='\0';
-		screenshot(line+11);
-	    }
-	    else
-	    {
-		line[strlen(line)-1]='\0';
-		char line2[200];
-		snprintf(line2,200,"%s.png",line);
-		screenshot(line2+11);
-	    }
-	}
-	else
-	{
-	    screenshot();
-	}
-    }
 
     else if (line[0] == 'A') { // toggle gridlines
 	sscanf(&line[1],"%d",&axes);
@@ -1613,7 +1556,6 @@ void idle(void)
 	{
 	    char framename[50];
 	    snprintf(framename, 49, "gifframe%06d.png",gifframe);
-	    screenshot(framename);
 	    gifframe++;
 	}
 
@@ -1823,7 +1765,6 @@ void keyb(unsigned char key, int x, int y)
     if (key == 'C') {ctog = 1-ctog;update=1;}
     if (key == 'H') {help = 1-help;update=1;}
     if (key == 'h') {help = 1-help;update=1;}
-    if (key == 'P') {screenshot();}
 }
 
 void save_config(void)
