@@ -1187,7 +1187,7 @@ void idle(void)
 	if (fgets(line2,300,stdin) == NULL) {}
 	//    myColor4f(red,green,blue,1);
 	glDisable(GL_LIGHTING);
-	renderBitmapStringTry(x,y,0,ANIM_FONT,line2);
+	renderBitmapString(x,y,0,ANIM_FONT,line2);
 	glEnable(GL_LIGHTING);
     }
     else if (line[0] == 't' && line[1] == '3')
