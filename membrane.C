@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <omp.h>
 int nr,nth;
 int N=81;
 float get_bessel_zero(int m, int n)
@@ -75,14 +74,11 @@ int main(int argc, char **argv)
   {
       if (frame > 200)
       {
-#pragma omp parallel 
       {
-#pragma omp for
     for (int i=0;i<=N;i++) 
       for (int j=0;j<=N;j++)
 	z[i*(N+1)+j] += v[i*(N+1)+j] * dt/2;
 
-#pragma omp for
     for (int i=1;i<N;i++) 
       for (int j=1;j<N;j++)    
       {
@@ -95,7 +91,6 @@ int main(int argc, char **argv)
 //        v[i*(N+1)+j] -= v[i*(N+1)+j] * damping * dt;
       } 
 
-#pragma omp for
     for (int i=0;i<=N;i++)
       for (int j=0;j<=N;j++)
 	z[i*(N+1)+j] += v[i*(N+1)+j] * dt/2;
