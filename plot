@@ -33,7 +33,19 @@ while (@ARGV)
       }
     }
   }
-  elsif ($arg eq "-yl" || $arg eq "-ly")
+  elsif ($arg eq "-name")
+  {
+    $filelabel[$nfiles]=shift;
+    if ($filelabel[$nfiles] =~ /^"/)
+    {
+      while (!($filelabel[$nfiles] =~ /$"/))
+      {
+        $newword=shift;
+        $filelabel[$nfiles]="$filelabel[$nfiles] $newword";
+      }
+    }
+  }
+elsif ($arg eq "-yl" || $arg eq "-ly")
   {
     $ylabel=shift;
      if ($ylabel =~ /^"/)
@@ -72,9 +84,19 @@ while (@ARGV)
   else
   {
     $filelist[$nfiles]=$arg; 
+    $filelabel[$nfiles]=$arg;
     $nfiles++;
   }
 }
+
+foreach $file (@filelist)
+{
+  $uid=int(rand(1e8));
+  $newname = "$file.sorted.$uid";
+  push @filelistsorted,$newname;
+  `sort -g < $file > $newname`;
+}
+
 
 $uid=int(rand(1e8));
 $tempfile="plottemp$uid";
@@ -87,7 +109,7 @@ if ($nfiles == 0)
     print Data $_;
   }
   $nfiles=1;
-  $filelist[0]=$tempfile;
+  $filelistsorted[0]=$tempfile;
   close Data;
 }
 
@@ -111,7 +133,9 @@ print Script "set logscale y\n" if ($semilogy==1);
 print Script "set logscale x\n" if ($semilogx==1);
 print Script "plot ";
 $i=1;
-foreach $file (@filelist)
+
+
+foreach $file (@filelistsorted)
 {
   # look at the first line and count columns to see if there are error bars
   open Test,"$file";
@@ -124,16 +148,9 @@ foreach $file (@filelist)
   if ($nen > 2) {$mytype = "errorbars";} else {$mytype = $type;}
 
 
-  if ($nfiles > 1) {print Script "\"$file\" with $mytype,";}
+  if ($nfiles > 1) {print Script "\"$file\" with $mytype title \"$filelabel[$i]\",";}
   else {print Script "\"$file\" with $mytype notitle";}
-
   $i++;
-}
-
-foreach $file (@filelist)
-{
-  `sort -g < $file > plottemplist`;
-  `mv plottemplist $file`;
 }
 
 `gnuplot -persist $scriptfile 2>/dev/null`;
@@ -141,6 +158,11 @@ foreach $file (@filelist)
 #print "-- gnuplot script file --\n";
 #system("cat $scriptfile");
 print "\n";
+
+foreach $file (@filelistsorted)
+{
+	`rm $file`;
+}
 
 if (-e $tempfile) {`rm $tempfile`;}
 if (-e $tempfile2) {`rm $tempfile2`;}
