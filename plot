@@ -81,6 +81,14 @@ elsif ($arg eq "-yl" || $arg eq "-ly")
   {
     $semilogx=1;
   }
+  elsif ($arg eq "-grid")
+  {
+    $grid=1;
+  }
+  elsif ($arg eq "-grid2")
+  {
+    $grid2=1;
+  }
   else
   {
     $filelist[$nfiles]=$arg; 
@@ -129,8 +137,11 @@ print Script "set title \"$title\"\n" if ($title);
 print Script "set xlabel \"$xlabel\"\n" if ($xlabel);
 print Script "set ylabel \"$ylabel\"\n" if ($ylabel);
 print Script "set logscale\nset format y \"%.0e\"\nset format x \"%.0e\"\n" if ($logs==1);
+print Script "set mxtics (2,3,4,5,6,7,8,9)\nset mytics (2,3,4,5,6,7,8,9)\n" if ($logs==1 && !$grid2);
 print Script "set logscale y\n" if ($semilogy==1);
 print Script "set logscale x\n" if ($semilogx==1);
+print Script "set grid\nset mxtics 10\nset mytics 10\nset grid linetype 1 linewidth 0.5 linecolor rgb \"gray\"\n" if ($logs==1 && $grid==1);
+print Script "set grid\nset logscale x 2\nset logscale y 2\nset format x \"%.2g\"\nset format y \"%.2g\"\nset grid linetype 1 linewidth 0.5 linecolor rgb \"gray\"\n" if ($logs==1 && $grid2==1);
 print Script "plot ";
 $i=1;
 
