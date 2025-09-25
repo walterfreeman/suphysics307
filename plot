@@ -143,7 +143,7 @@ print Script "set logscale x\n" if ($semilogx==1);
 print Script "set grid\nset mxtics 10\nset mytics 10\nset grid linetype 1 linewidth 0.5 linecolor rgb \"gray\"\n" if ($logs==1 && $grid==1);
 print Script "set grid\nset logscale x 2\nset logscale y 2\nset format x \"%.2g\"\nset format y \"%.2g\"\nset grid linetype 1 linewidth 0.5 linecolor rgb \"gray\"\n" if ($logs==1 && $grid2==1);
 print Script "plot ";
-$i=1;
+$i=0;
 
 
 foreach $file (@filelistsorted)
